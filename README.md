@@ -132,3 +132,4 @@ Frontend has no additional environment variables — inference runs through Next
 
 MIT — see [LICENSE](LICENSE).
 # qvac
+# qvac
