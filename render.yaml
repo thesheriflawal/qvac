@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: qvac-backend
+    runtime: go
+    rootDir: backend
+    buildCommand: go build -o bin/app .
+    startCommand: ./bin/app
+    envVars:
+      - key: APP_ENV
+        value: production
