@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>P2P Buy Order Completed – Kynettic</title>
+</head>
+<body style="margin:0;padding:0;background-color:#F4F7FB;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F4F7FB;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;">
+
+        <!-- HEADER -->
+        <tr><td style="background:#1D3B53;border-radius:16px 16px 0 0;padding:28px 32px;text-align:center;">
+          <img src="https://app.kynettic.com/KYNETTIC.png" alt="Kynettic" width="44" height="44" style="border-radius:50%;vertical-align:middle;margin-right:10px;" />
+          <span style="color:#F5A623;font-size:22px;font-weight:800;letter-spacing:2px;vertical-align:middle;">KYNETTIC</span>
+        </td></tr>
+
+        <!-- HERO -->
+        <tr><td style="background:#1D3B53;padding:0 32px 36px;text-align:center;">
+          <div style="width:64px;height:64px;background:#34C759;border-radius:50%;margin:0 auto 14px;display:inline-block;line-height:64px;font-size:30px;">✓</div>
+          <p style="color:rgba(255,255,255,0.75);font-size:13px;margin:0 0 6px;text-transform:uppercase;letter-spacing:1px;">Buy Order Completed</p>
+          <p style="color:#ffffff;font-size:38px;font-weight:800;margin:0;">{{quantity}} {{currency}}</p>
+          <span style="display:inline-block;background:#34C759;color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;margin-top:10px;">Completed</span>
+        </td></tr>
+
+        <!-- BODY CARD -->
+        <tr><td style="background:#ffffff;padding:32px;border-radius:0 0 16px 16px;">
+
+          <p style="font-size:16px;color:#1D3B53;margin:0 0 6px;font-weight:600;">Hey {{name}},</p>
+          <p style="font-size:14px;color:#555;line-height:1.6;margin:0 0 28px;">Your P2P buy order has been completed. The <strong>{{currency}}</strong> has been added to your wallet.</p>
+
+          <!-- BUY BADGE -->
+          <div style="background:#E8F5E9;border-left:4px solid #34C759;border-radius:8px;padding:12px 16px;margin-bottom:24px;">
+            <span style="font-size:13px;color:#2E7D32;font-weight:700;">▲ BUY {{currency}}</span>
+            <span style="font-size:13px;color:#555;margin-left:8px;">via P2P Market</span>
+          </div>
+
+          <!-- DETAILS -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#F4F7FB;border-radius:12px;overflow:hidden;">
+            <tr style="border-bottom:1px solid #E8EFF7;">
+              <td style="padding:13px 16px;font-size:13px;color:#8E8E93;">Quantity Bought</td>
+              <td style="padding:13px 16px;font-size:13px;color:#34C759;font-weight:700;text-align:right;">+{{quantity}} {{currency}}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #E8EFF7;background:#fff;">
+              <td style="padding:13px 16px;font-size:13px;color:#8E8E93;">Amount Paid</td>
+              <td style="padding:13px 16px;font-size:13px;color:#1D3B53;font-weight:600;text-align:right;">₦{{fiat_amount}}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #E8EFF7;">
+              <td style="padding:13px 16px;font-size:13px;color:#8E8E93;">Price per Unit</td>
+              <td style="padding:13px 16px;font-size:13px;color:#1D3B53;font-weight:600;text-align:right;">₦{{price}}</td>
+            </tr>
+
+            <tr style="border-bottom:1px solid #E8EFF7;">
+              <td style="padding:13px 16px;font-size:13px;color:#8E8E93;">Seller</td>
+              <td style="padding:13px 16px;font-size:13px;color:#1D3B53;font-weight:600;text-align:right;">{{counterparty}}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #E8EFF7;background:#fff;">
+              <td style="padding:13px 16px;font-size:13px;color:#8E8E93;">Order No.</td>
+              <td style="padding:13px 16px;font-size:13px;color:#4472B7;font-weight:600;text-align:right;font-family:monospace;">{{reference}}</td>
+            </tr>
+            <tr>
+              <td style="padding:13px 16px;font-size:13px;color:#8E8E93;">Date &amp; Time</td>
+              <td style="padding:13px 16px;font-size:13px;color:#1D3B53;font-weight:600;text-align:right;">{{date}}</td>
+            </tr>
+          </table>
+
+          <p style="font-size:13px;color:#8E8E93;line-height:1.6;margin:24px 0 0;">Your crypto is now in your wallet and ready to use. Happy trading!</p>
+
+          <div style="text-align:center;margin-top:28px;">
+            <a href="https://app.kynettic.com/orders" style="display:inline-block;background:#4472B7;color:#ffffff;font-size:14px;font-weight:700;padding:14px 36px;border-radius:10px;text-decoration:none;">View Order</a>
+          </div>
+        </td></tr>
+
+        <!-- FOOTER -->
+        <tr><td style="padding:28px 16px;text-align:center;">
+          <p style="font-size:12px;color:#8E8E93;margin:0 0 6px;">Need help? <a href="mailto:support@kynettic.com" style="color:#4472B7;text-decoration:none;">support@kynettic.com</a></p>
+          <p style="font-size:11px;color:#BCBCBC;margin:0;">© 2025 Kynettic. All rights reserved.<br/>This is an automated notification — please do not reply to this email.</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

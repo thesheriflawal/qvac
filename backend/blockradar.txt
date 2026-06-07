@@ -1,0 +1,175 @@
+1) New webhook endpoint
+
+You now have a POST endpoint:
+
+•  POST /webhooks/blockradar
+
+This is a public endpoint (no JWT), but protected by the Blockradar HMAC signature.
+
+It is wired in:
+•  internal/router/router.go: after /health, there is a line registering router.POST("/webhooks/blockradar", r.blockradarHandler.HandleWebhook).
+
+The handler is:
+•  internal/handler/blockradar_handler.go
+
+HandleWebhook does the following:
+•  Reads the x-blockradar-signature header. If missing, returns HTTP 400.
+•  Reads the raw request body.
+•  Calls blockradar.VerifyWebhookSignature(body, signature, cfg.Blockradar). If false, logs and returns HTTP 401.
+•  Unmarshals the JSON into blockradar.WebhookEvent.
+•  Calls the BlockradarWebhookService to process the event.
+•  If the service returns an error, responds with HTTP 500 (so Blockradar retries).
+•  If everything is OK, responds with HTTP 200 and an empty body (this is what Blockradar expects).
+
+2) Signature verification
+
+File:
+•  internal/clients/blockradar/webhook.go
+
+There is a function VerifyWebhookSignature(body []byte, signature string, cfg config.BlockradarConfig) bool.
+
+How it works:
+•  Uses cfg.Blockradar.APIKey as the shared secret.
+•  Computes HMAC-SHA512 of the raw JSON body with that secret.
+•  Encodes the HMAC as a hex string.
+•  Compares it (case-insensitive) to the x-blockradar-signature header using a constant-time comparison.
+
+This matches the Blockradar docs’ pattern:
+HMAC_SHA512(JSON.stringify(body), WALLET_API_KEY)
+
+In your env, BLOCKRADAR_API_KEY must be the same value as that WALLET_API_KEY.
+
+3) Webhook payload types
+
+Also in internal/clients/blockradar/webhook.go:
+
+•  WebhookEvent:
+◦  Event string  (e.g. "deposit.success")
+◦  Data  WebhookTxPayload
+•  WebhookTxPayload includes:
+◦  Basic fields: id, reference, amount, amountPaid, currency, hash, status, type, network, chainId.
+◦  Metadata: map[string]interface{} for metadata.user_id.
+◦  Asset block: id, name, symbol, decimals.
+◦  Blockchain block: id, name, symbol, slug.
+◦  Wallet block: id, name, status.
+
+This matches the structure shown in Blockradar’s deposit.success example (including metadata.user_id and asset.symbol).
+
+4) Business logic for deposit.success
+
+Service file:
+•  internal/service/blockradar_webhook_service.go
+
+Interface:
+•  BlockradarWebhookService with method HandleEvent(ctx, evt).
+
+Implementation:
+•  NewBlockradarWebhookService() returns a concrete implementation.
+
+Event routing:
+•  HandleEvent checks evt.Event.
+•  If evt.Event == "deposit.success", it calls handleDepositSuccess.
+•  For any other event, it just logs and returns nil (no error, no DB changes).
+
+handleDepositSuccess logic:
+•  Extracts data := evt.Data.
+•  Validates:
+◦  data.Hash must be non-empty (transaction hash).
+◦  data.Amount must be non-empty and parseable to a decimal.
+•  Determines currency:
+◦  Prefer data.Asset.Symbol (uppercased), e.g. "USDC".
+◦  If that’s empty, fall back to data.Currency (uppercased).
+◦  If still empty, error.
+•  Extracts user_id from data.Metadata["user_id"]:
+◦  Supports user_id as a JSON number (float64) or a string.
+◦  If missing or invalid, returns an error.
+
+All DB work is inside database.Transaction (one database transaction with GORM):
+
+1. Idempotency:
+◦  Queries models.CryptoDeposit where tx_hash = data.Hash.
+◦  If found, it logs that the deposit is already processed and returns nil.
+◦  If not found and error is not RecordNotFound, returns the DB error.
+2. Create CryptoDeposit row:
+◦  Creates a models.CryptoDeposit with:
+▪  UserID: userID from metadata
+▪  Currency: determined currency
+▪  TxHash: data.Hash
+▪  Amount: parsed decimal
+▪  Status: "confirmed"
+3. Update user wallet and wallet transaction:
+◦  Tries to load models.Wallet for (user_id, currency).
+◦  If no wallet exists:
+▪  Creates a new wallet with Balance = amount.
+▪  Creates a WalletTransaction row:
+▪  Type: "deposit"
+▪  Amount: amount
+▪  BalanceBefore: 0
+▪  BalanceAfter: wallet.Balance
+▪  ReferenceID: data.Hash
+▪  Description: "Blockradar deposit <hash>"
+◦  If wallet exists:
+▪  Saves previous balance.
+▪  Adds amount to wallet.Balance and saves.
+▪  Creates a WalletTransaction row with BalanceBefore and BalanceAfter reflecting the change.
+
+So each successful deposit.success event will:
+•  Insert one row into crypto_deposits,
+•  Create or update the wallets row for that user/currency,
+•  Insert one row into wallet_transactions.
+
+If Blockradar retries the same event, the tx_hash uniqueness check on CryptoDeposit prevents double-crediting (it just logs and returns without changes).
+
+5) Wiring into main and router
+
+main.go:
+•  Creates the webhook service:
+◦  blockradarWebhookService := service.NewBlockradarWebhookService()
+•  Creates the handler:
+◦  blockradarHandler := handler.NewBlockradarHandler(cfg, blockradarWebhookService)
+•  Passes it into the router:
+◦  r := router.NewRouter(cfg, healthHandler, authHandler, userHandler, adminRefHandler, referenceHandler, blockradarHandler)
+
+router.go:
+•  Router struct now also has:
+◦  blockradarHandler *handler.BlockradarHandler
+•  NewRouter’s constructor takes that parameter and saves it.
+•  /webhooks/blockradar is registered as noted in section 1.
+
+6) MasterWallet cleanup
+
+Since you deleted MasterWallet:
+•  internal/database/database.go’s AutoMigrate list was updated to remove models.MasterWallet{}.
+•  That keeps migrations consistent with the models currently in internal/models.
+
+7) Configuration you must ensure
+
+In your env (e.g. .env):
+
+•  BLOCKRADAR_BASE_URL should be the Blockradar API base URL.
+•  BLOCKRADAR_API_KEY must be the same value they refer to as WALLET_API_KEY in their webhook signature example (the key used for the HMAC).
+
+You already have BLOCKRADAR_WALLET_IDS and BLOCKRADAR_API_KEYS configured for address creation; those are separate and still used by the client.
+
+8) How to test
+
+a) Start your API server.
+
+b) In the Blockradar dashboard, for your test master wallet:
+•  Set the webhook URL to:
+◦  Local via tunnel: https://<your-ngrok-subdomain>.ngrok.io/webhooks/blockradar
+◦  Or your real API URL in staging/production.
+
+c) Make sure the wallet/api key used by that master wallet equals your BLOCKRADAR_API_KEY.
+
+d) Trigger a test deposit:
+•  E.g. deposit to an address that you previously created with /api/v1/users/me/wallet-address, with metadata.user_id set to the internal user id.
+
+e) Check the database:
+•  crypto_deposits: should have a new row with that tx hash and user_id.
+•  wallets: wallet for (user_id, currency) should have an increased balance.
+•  wallet_transactions: should have a new deposit row with that tx hash and updated balances.
+
+If you’d like, next step can be adding read APIs, e.g.:
+•  GET /api/v1/users/me/wallets – list balances per currency.
+•  GET /api/v1/users/me/wallet-transactions – list wallet transactions.

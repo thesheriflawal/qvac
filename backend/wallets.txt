@@ -1,0 +1,192 @@
+1) New repository: wallets and wallet transactions
+
+File:
+•  internal/repository/wallet_repository.go
+
+Interface:
+•  WalletRepository with:
+◦  ListByUser(userID uint) ([]models.Wallet, error)
+▪  Returns all wallets for the given user (one per currency).
+◦  ListTransactionsByUser(userID uint, currency string, page, pageSize int) ([]models.WalletTransaction, int64, error)
+▪  Returns paginated wallet transactions for a user, optionally filtered by currency, plus total count.
+
+Implementation details:
+•  ListByUser:
+◦  SELECT * FROM wallets WHERE user_id = ? ORDER BY currency ASC
+•  ListTransactionsByUser:
+◦  Uses a JOIN from wallet_transactions to wallets:
+▪  Joins: wallets ON wallets.id = wallet_transactions.wallet_id
+▪  Filters: wallets.user_id = ? and optionally wallets.currency = ?
+▪  Counts total rows.
+▪  Returns ordered by wallet_transactions.created_at DESC with offset/limit for pagination.
+
+2) WalletService extended with read methods
+
+File:
+•  internal/service/wallet_service.go
+
+WalletService interface now:
+
+•  GetOrCreateAddress(ctx, userID, chainKey, networkType, currencySymbol) (*models.CryptoAddress, bool, error)
+•  ListUserWallets(ctx, userID uint) ([]models.Wallet, error)
+•  ListUserWalletTransactions(ctx, userID uint, currency string, page, pageSize int) ([]models.WalletTransaction, int64, error)
+
+walletService struct now has:
+
+•  cryptoAddrRepo repository.CryptoAddressRepository
+•  networkRepo repository.NetworkRepository
+•  currencyRepo repository.CurrencyRepository
+•  walletRepo repository.WalletRepository
+•  blockradar *blockradar.Client
+
+Constructor:
+
+•  NewWalletService(
+    cryptoAddrRepo,
+    networkRepo,
+    currencyRepo,
+    blockradarClient,
+    walletRepo,
+  ) WalletService
+
+New methods:
+
+•  ListUserWallets:
+◦  Returns error if walletRepo is nil.
+◦  Otherwise calls walletRepo.ListByUser(userID).
+•  ListUserWalletTransactions:
+◦  Returns error if walletRepo is nil.
+◦  Otherwise calls walletRepo.ListTransactionsByUser(userID, currency, page, pageSize).
+
+Existing GetOrCreateAddress behavior is unchanged.
+
+3) Wiring in main.go
+
+File:
+•  main.go
+
+Repository initialization now:
+
+•  userRepo := repository.NewUserRepository(database.GetDB())
+•  cryptoAddrRepo := repository.NewCryptoAddressRepository(database.GetDB())
+•  networkRepo := repository.NewNetworkRepository(database.GetDB())
+•  currencyRepo := repository.NewCurrencyRepository(database.GetDB())
+•  walletRepo := repository.NewWalletRepository(database.GetDB())
+
+Services:
+
+•  authService := service.NewAuthService(userRepo, cfg, emailSender)
+•  userService := service.NewUserService(userRepo)
+•  walletService := service.NewWalletService(cryptoAddrRepo, networkRepo, currencyRepo, blockradarClient, walletRepo)
+•  blockradarWebhookService := service.NewBlockradarWebhookService()
+
+Everything else in main is unchanged.
+
+4) New user endpoints and handlers
+
+File:
+•  internal/handler/user_handler.go
+
+Imports updated to include:
+•  "strings"
+
+UserHandler already has:
+•  walletService service.WalletService
+
+Existing GetWalletAddress is unchanged.
+
+New handler: GET /api/v1/users/me/wallets
+
+•  Function: ListWallets
+
+Flow:
+•  Uses middleware.GetUserFromContext:
+◦  If missing/invalid → 401 via utils.UnauthorizedResponse.
+•  Checks h.walletService != nil, otherwise 500 via utils.InternalServerErrorResponse.
+•  Calls:
+◦  wallets, err := h.walletService.ListUserWallets(c.Request.Context(), claims.UserID)
+•  On error → 500 "Failed to retrieve wallets".
+•  On success → 200 with:
+◦  utils.SuccessResponse(c, http.StatusOK, "Wallets retrieved successfully", wallets)
+
+Swagger-style comments:
+•  Summary: "Get my wallets"
+•  Description: "List all wallets (balances per currency) for the authenticated user"
+•  Route: /users/me/wallets [get]
+•  Response: utils.Response{data=[]models.Wallet}
+
+New handler: GET /api/v1/users/me/wallet-transactions
+
+•  Function: ListWalletTransactions
+
+Flow:
+•  Uses middleware.GetUserFromContext:
+◦  If missing/invalid → 401.
+•  Checks h.walletService != nil, otherwise 500.
+•  Reads query params:
+◦  currency (optional):
+▪  currency := strings.ToUpper(strings.TrimSpace(c.Query("currency")))
+◦  page (optional, default 1)
+◦  page_size (optional, default 10)
+•  Calls:
+◦  txs, total, err := h.walletService.ListUserWalletTransactions(
+      c.Request.Context(),
+      claims.UserID,
+      currency,
+      page,
+      pageSize,
+    )
+•  On error → 500 "Failed to retrieve wallet transactions".
+•  Uses utils.CalculatePagination(page, pageSize, total).
+•  Returns 200 with:
+◦  utils.PaginatedSuccessResponse(
+      c,
+      http.StatusOK,
+      "Wallet transactions retrieved successfully",
+      txs,
+      pagination,
+    )
+
+Swagger-style comments:
+•  Summary: "Get my wallet transactions"
+•  Description: "List wallet transactions for the authenticated user, optionally filtered by currency"
+•  Params:
+◦  currency (query, string, optional)
+◦  page (query, int, optional, default 1)
+◦  page_size (query, int, optional, default 10)
+•  Route: /users/me/wallet-transactions [get]
+•  Response: utils.PaginatedResponse{data=[]models.WalletTransaction}
+
+5) Routing
+
+File:
+•  internal/router/router.go
+
+In the /api/v1/users (protected) group, after /me/wallet-address:
+
+•  users.GET("/me", r.userHandler.GetProfile)
+•  users.PUT("/me", r.userHandler.UpdateProfile)
+•  users.POST("/me/change-password", r.userHandler.ChangePassword)
+•  users.GET("/me/wallet-address", r.userHandler.GetWalletAddress)
+•  users.GET("/me/wallets", r.userHandler.ListWallets)
+•  users.GET("/me/wallet-transactions", r.userHandler.ListWalletTransactions)
+
+JWT auth still wraps the /users group, so both new endpoints require Authorization: Bearer <token>.
+
+6) How to call these endpoints
+
+Assuming auth is already in place and you have a valid access token:
+
+•  List wallets per currency:
+◦  GET /api/v1/users/me/wallets
+◦  Headers:
+▪  Authorization: Bearer <access_token>
+◦  Response data: array of Wallets, e.g.
+▪  [{ "user_id": 1, "currency": "USDC", "balance": "...", "locked_balance": "..." }, ...]
+•  List wallet transactions:
+◦  GET /api/v1/users/me/wallet-transactions?currency=USDC&page=1&page_size=10
+◦  Headers:
+▪  Authorization: Bearer <access_token>
+◦  Response data: paginated list of WalletTransaction objects with metadata in "pagination".
+
+If you want, I can also add simple filtering options later (e.g. by type=deposit/withdrawal, date ranges) or adjust the response shape to a custom DTO instead of using models directly.

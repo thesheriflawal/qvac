@@ -1,0 +1,5254 @@
+basePath: /api/v1
+definitions:
+  handler.AuthResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+      user: {}
+    type: object
+  handler.BroadcastNotificationRequest:
+    properties:
+      message:
+        type: string
+      title:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - message
+    - title
+    type: object
+  handler.ChangePINRequest:
+    properties:
+      confirm_new_pin:
+        type: string
+      new_pin:
+        type: string
+      old_pin:
+        type: string
+    required:
+    - confirm_new_pin
+    - new_pin
+    - old_pin
+    type: object
+  handler.ChangePasswordRequest:
+    properties:
+      new_password:
+        description: Enforce strong password policy consistent with registration and
+          reset flows.
+        minLength: 12
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  handler.ConfirmEmailChangeRequest:
+    properties:
+      otp:
+        type: string
+    required:
+    - otp
+    type: object
+  handler.CreateCurrencyRequest:
+    properties:
+      asset_id:
+        description: Optional Blockradar asset ID for crypto withdrawals (UUID-like).
+        type: string
+      coingecko_id:
+        description: Optional CoinGecko coin ID for price fetching (e.g., "tether",
+          "ethereum").
+        type: string
+      decimals:
+        type: integer
+      is_native:
+        type: boolean
+      name:
+        type: string
+      symbol:
+        type: string
+    required:
+    - decimals
+    - name
+    - symbol
+    type: object
+  handler.CreateNetworkRequest:
+    properties:
+      chain_id:
+        type: integer
+      chain_key:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      network_type:
+        enum:
+        - mainnet
+        - testnet
+        type: string
+    required:
+    - chain_id
+    - chain_key
+    - name
+    - network_type
+    type: object
+  handler.CreateP2PAdRequest:
+    properties:
+      currency_id:
+        type: string
+      is_private:
+        type: boolean
+      min_amount:
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+      price:
+        description: Required only for price_type=fixed
+        type: string
+      price_type:
+        type: string
+      relative_percent:
+        description: Required only for price_type=relative
+        type: string
+      rollover_enabled:
+        type: boolean
+      total_quantity:
+        type: string
+      type:
+        enum:
+        - buy
+        - sell
+        type: string
+    required:
+    - currency_id
+    - min_amount
+    - pin
+    - price_type
+    - type
+    type: object
+  handler.CryptoWithdrawRequest:
+    properties:
+      address:
+        type: string
+      amount:
+        type: string
+      auth_code:
+        description: 6-digit Google Authenticator (TOTP) code. Required only when
+          2FA is enabled.
+        type: string
+      chain:
+        type: string
+      currency:
+        type: string
+      note:
+        maxLength: 255
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+    required:
+    - address
+    - amount
+    - chain
+    - currency
+    - pin
+    type: object
+  handler.DeleteMyAccountRequest:
+    properties:
+      password:
+        type: string
+    required:
+    - password
+    type: object
+  handler.DisableTwoFARequest:
+    properties:
+      code:
+        description: 6-digit Google Authenticator (TOTP) code.
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+    required:
+    - code
+    - pin
+    type: object
+  handler.EnableTwoFARequest:
+    properties:
+      code:
+        type: string
+    required:
+    - code
+    type: object
+  handler.ExecuteP2PTradeRequest:
+    properties:
+      ad_id:
+        type: string
+      amount_input:
+        description: The amount the user wants to trade, expressed in input_currency.
+        type: string
+      input_currency:
+        description: '"fiat" or "crypto" — which side amount_input is denominated
+          in.'
+        enum:
+        - fiat
+        - crypto
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+    required:
+    - ad_id
+    - amount_input
+    - input_currency
+    - pin
+    type: object
+  handler.FiatBankLookupRequest:
+    properties:
+      account_number:
+        type: string
+      bank_code:
+        type: string
+    required:
+    - account_number
+    - bank_code
+    type: object
+  handler.FiatWithdrawRequest:
+    properties:
+      account_name:
+        type: string
+      account_number:
+        type: string
+      amount:
+        type: string
+      auth_code:
+        description: 6-digit Google Authenticator (TOTP) code. Required only when
+          2FA is enabled.
+        type: string
+      bank_code:
+        type: string
+      bank_name:
+        type: string
+      narration:
+        maxLength: 255
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+    required:
+    - account_name
+    - account_number
+    - amount
+    - bank_code
+    - bank_name
+    - pin
+    type: object
+  handler.ForgotPasswordRequestOTPRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  handler.ForgotPasswordResetRequest:
+    properties:
+      new_password:
+        minLength: 12
+        type: string
+      reset_token:
+        type: string
+    required:
+    - new_password
+    - reset_token
+    type: object
+  handler.ForgotPasswordVerifyOTPRequest:
+    properties:
+      email:
+        type: string
+      otp:
+        type: string
+    required:
+    - email
+    - otp
+    type: object
+  handler.HealthResponse:
+    properties:
+      database:
+        type: string
+      redis:
+        type: string
+      status:
+        type: string
+    type: object
+  handler.InternalTransferRequest:
+    properties:
+      amount:
+        type: string
+      auth_code:
+        description: 6-digit Google Authenticator (TOTP) code. Required only when
+          2FA is enabled.
+        type: string
+      currency_id:
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+      receiver_email:
+        type: string
+      receiver_uid:
+        type: string
+    required:
+    - amount
+    - currency_id
+    - pin
+    type: object
+  handler.LoginRequest:
+    properties:
+      device_type:
+        enum:
+        - web
+        - mobile
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - device_type
+    - email
+    - password
+    type: object
+  handler.OpenClaimCycleRequest:
+    properties:
+      currency:
+        description: e.g. "NGN"
+        type: string
+      pool_amount_fiat:
+        type: number
+      quarter:
+        description: e.g. "2026-Q1"
+        type: string
+    required:
+    - currency
+    - pool_amount_fiat
+    - quarter
+    type: object
+  handler.P2PAdView:
+    properties:
+      created_at:
+        type: string
+      currency:
+        type: string
+      effective_price:
+        description: |-
+          EffectivePrice is the current effective price for this ad.
+          For fixed pricing, this is the same as Price.
+          For relative pricing, this is the current market price adjusted by RelativePercent.
+        type: string
+      id:
+        type: string
+      is_private:
+        type: boolean
+      min_amount:
+        description: per-order minimum
+        type: number
+      price:
+        type: number
+      price_type:
+        description: fixed, relative
+        type: string
+      relative_percent:
+        description: +/- % of market price when PriceType=relative
+        type: number
+      remaining_quantity:
+        description: remaining capacity
+        type: number
+      rollover_enabled:
+        type: boolean
+      status:
+        description: active, paused, closed
+        type: string
+      total_quantity:
+        description: total ad capacity when rollover is off
+        type: number
+      type:
+        description: buy or sell
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  handler.P2POrderView:
+    properties:
+      ad_id:
+        type: string
+      amount:
+        type: number
+      buyer_id:
+        type: string
+      created_at:
+        type: string
+      currency:
+        type: string
+      escrow_wallet_id:
+        type: string
+      fee_amount:
+        description: |-
+          FeeAmount and FeeCurrency are the taker fee for this order — the fee
+          charged to the party who created the order (executed against the ad).
+        type: number
+      fee_currency:
+        type: string
+      id:
+        type: string
+      maker_fee_amount:
+        type: number
+      maker_fee_currency:
+        type: string
+      order_number:
+        description: OrderNumber is a public-facing 20-digit numeric identifier for
+          the order.
+        type: string
+      price:
+        type: number
+      seller_id:
+        type: string
+      side:
+        description: |-
+          Side is from the perspective of the authenticated user: "buy" if the
+          user bought crypto in this order, "sell" if they sold crypto.
+        type: string
+      status:
+        description: pending, paid, disputed, cancelled, completed
+        type: string
+      taker_fee_amount:
+        type: number
+      taker_fee_currency:
+        type: string
+      total:
+        type: number
+      type:
+        description: Type indicates whether this is a buy or sell order for crypto
+          (mirrors the ad type).
+        type: string
+      updated_at:
+        type: string
+    type: object
+  handler.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  handler.RequestEmailChangeOTPRequest:
+    properties:
+      new_email:
+        type: string
+      password:
+        type: string
+    required:
+    - new_email
+    - password
+    type: object
+  handler.RequestRegistrationOTPRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  handler.SetPasswordRequest:
+    properties:
+      password:
+        minLength: 12
+        type: string
+      referral_code:
+        type: string
+      registration_token:
+        type: string
+    required:
+    - password
+    - registration_token
+    type: object
+  handler.SetUserStatusRequest:
+    properties:
+      is_active:
+        type: boolean
+    type: object
+  handler.SetupPINRequest:
+    properties:
+      confirm_pin:
+        type: string
+      pin:
+        type: string
+    required:
+    - confirm_pin
+    - pin
+    type: object
+  handler.SocialLoginRequest:
+    properties:
+      device_type:
+        enum:
+        - web
+        - mobile
+        type: string
+      id_token:
+        type: string
+      nonce:
+        type: string
+      referral_code:
+        type: string
+    required:
+    - device_type
+    - id_token
+    - nonce
+    type: object
+  handler.SubmitReviewRequest:
+    properties:
+      content:
+        minLength: 1
+        type: string
+      email:
+        type: string
+      name:
+        maxLength: 255
+        minLength: 2
+        type: string
+    required:
+    - content
+    - email
+    - name
+    type: object
+  handler.SubmitTier1Request:
+    properties:
+      bvn:
+        type: string
+      date_of_birth:
+        type: string
+      display_username_on_p2p:
+        type: boolean
+      first_name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      last_name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      phone_number:
+        maxLength: 20
+        minLength: 10
+        type: string
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - bvn
+    - date_of_birth
+    - first_name
+    - last_name
+    - phone_number
+    - username
+    type: object
+  handler.SubmitTier2Request:
+    properties:
+      nin:
+        type: string
+    required:
+    - nin
+    type: object
+  handler.TwoFALoginRequest:
+    properties:
+      code:
+        type: string
+      device_type:
+        enum:
+        - web
+        - mobile
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - code
+    - device_type
+    - email
+    - password
+    type: object
+  handler.TwoFASetupResponse:
+    properties:
+      enabled:
+        type: boolean
+      otpauth_url:
+        type: string
+      secret:
+        type: string
+    type: object
+  handler.UpdateP2PAdRequest:
+    properties:
+      is_private:
+        type: boolean
+      min_amount:
+        type: string
+      pin:
+        description: 6-digit transaction PIN.
+        type: string
+      price:
+        type: string
+      price_type:
+        type: string
+      relative_percent:
+        type: string
+      status:
+        description: active, paused, closed
+        type: string
+      total_quantity:
+        type: string
+    required:
+    - pin
+    type: object
+  handler.UpdateProfileRequest:
+    type: object
+  handler.UpdateReferralConfigRequest:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    required:
+    - key
+    - value
+    type: object
+  handler.UpsertCommunityLinkRequest:
+    properties:
+      label:
+        type: string
+      platform:
+        type: string
+      url:
+        type: string
+    required:
+    - platform
+    - url
+    type: object
+  handler.VerifyRegistrationOTPRequest:
+    properties:
+      email:
+        type: string
+      otp:
+        type: string
+    required:
+    - email
+    - otp
+    type: object
+  handler.VerifyTwoFARequest:
+    properties:
+      code:
+        type: string
+      pre_auth_token:
+        type: string
+    required:
+    - code
+    - pre_auth_token
+    type: object
+  handler.WalletAddressResponse:
+    properties:
+      address:
+        type: string
+      chain:
+        type: string
+      created:
+        type: boolean
+    type: object
+  handler.adminSecurityView:
+    properties:
+      last_pin_change:
+        type: string
+      notifications_enabled:
+        type: boolean
+      pin_enabled:
+        type: boolean
+      twofa_enabled:
+        type: boolean
+    type: object
+  handler.adminUserDetailResponse:
+    properties:
+      kyc:
+        $ref: '#/definitions/models.KYCStatusResponse'
+      profile:
+        $ref: '#/definitions/models.UserProfile'
+      recent_transactions:
+        items:
+          $ref: '#/definitions/models.WalletTransaction'
+        type: array
+      security:
+        $ref: '#/definitions/handler.adminSecurityView'
+      tx_total:
+        type: integer
+      user:
+        $ref: '#/definitions/models.UserResponse'
+      wallets:
+        items:
+          $ref: '#/definitions/models.WalletResponse'
+        type: array
+    type: object
+  handler.setOverrideRequest:
+    properties:
+      limit_ngn:
+        minimum: 1
+        type: integer
+    required:
+    - limit_ngn
+    type: object
+  models.BankAccount:
+    properties:
+      account_name:
+        type: string
+      account_number:
+        type: string
+      bank_name:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.CommunityLink:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      label:
+        type: string
+      platform:
+        type: string
+      updated_at:
+        type: string
+      url:
+        type: string
+    type: object
+  models.CounterpartyInfo:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      uid:
+        type: string
+    type: object
+  models.CryptoDeposit:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      currency:
+        type: string
+      id:
+        type: string
+      network:
+        type: string
+      status:
+        description: pending, confirmed
+        type: string
+      tx_hash:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.CryptoWithdrawal:
+    properties:
+      address:
+        type: string
+      amount:
+        type: number
+      created_at:
+        type: string
+      currency:
+        type: string
+      fee:
+        type: number
+      id:
+        type: string
+      status:
+        description: processing, completed, failed
+        type: string
+      tx_hash:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.Currency:
+    properties:
+      asset_id:
+        description: |-
+          AssetID is the Blockradar asset identifier used for withdrawals (UUID-like string).
+          It is optional because not all currencies need to be withdrawable via Blockradar.
+        type: string
+      coingecko_id:
+        description: |-
+          CoinGeckoID is the CoinGecko coin identifier used for price fetching (e.g., "tether", "ethereum").
+          It is optional and only needed for currencies that support relative pricing in P2P ads.
+        type: string
+      created_at:
+        type: string
+      decimals:
+        type: integer
+      id:
+        type: string
+      is_native:
+        description: true for ETH
+        type: boolean
+      name:
+        description: Ether, Tether
+        type: string
+      symbol:
+        description: ETH, USDT
+        type: string
+      type:
+        description: |-
+          Type distinguishes fiat currencies (NGN, USD, etc.) from crypto assets.
+          Values: "fiat" or "crypto". Defaults to "crypto" for backward compatibility.
+          Existing fiat currency rows must be updated via a DB migration after deployment.
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.FiatDeposit:
+    properties:
+      account_number:
+        type: string
+      amount:
+        type: number
+      bank_name:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      reference:
+        type: string
+      status:
+        description: pending, confirmed
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.FiatWithdrawal:
+    properties:
+      account_number:
+        type: string
+      amount:
+        type: number
+      bank_name:
+        type: string
+      created_at:
+        type: string
+      fee:
+        type: number
+      id:
+        type: string
+      stamp_duty:
+        type: number
+      status:
+        description: processing, completed, failed
+        type: string
+      total_fee:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.InternalTransfer:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      currency:
+        type: string
+      id:
+        type: string
+      receiver_id:
+        type: string
+      sender_id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.KYCStatus:
+    enum:
+    - pending
+    - verified
+    - rejected
+    type: string
+    x-enum-varnames:
+    - KYCStatusPending
+    - KYCStatusVerified
+    - KYCStatusRejected
+  models.KYCStatusResponse:
+    properties:
+      address_verified:
+        type: boolean
+      bvn_verified:
+        type: boolean
+      next_tier:
+        $ref: '#/definitions/models.KYCTier'
+      nin_verified:
+        type: boolean
+      rejection_reason:
+        type: string
+      selfie_verified:
+        type: boolean
+      status:
+        $ref: '#/definitions/models.KYCStatus'
+      tier:
+        $ref: '#/definitions/models.KYCTier'
+    type: object
+  models.KYCTier:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - KYCTierNone
+    - KYCTier1
+    - KYCTier2
+    - KYCTier3
+  models.Network:
+    properties:
+      chain_id:
+        type: integer
+      chain_key:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      name:
+        type: string
+      network_type:
+        description: mainnet | testnet
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.NotificationResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      is_read:
+        type: boolean
+      message:
+        type: string
+      read_at:
+        type: string
+      title:
+        type: string
+    type: object
+  models.P2PAd:
+    properties:
+      created_at:
+        type: string
+      currency:
+        type: string
+      id:
+        type: string
+      is_private:
+        type: boolean
+      min_amount:
+        description: per-order minimum
+        type: number
+      price:
+        type: number
+      price_type:
+        description: fixed, relative
+        type: string
+      relative_percent:
+        description: +/- % of market price when PriceType=relative
+        type: number
+      remaining_quantity:
+        description: remaining capacity
+        type: number
+      rollover_enabled:
+        type: boolean
+      status:
+        description: active, paused, closed
+        type: string
+      total_quantity:
+        description: total ad capacity when rollover is off
+        type: number
+      type:
+        description: buy or sell
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  models.PlatformFeeBalance:
+    properties:
+      created_at:
+        type: string
+      currency:
+        type: string
+      id:
+        type: string
+      total_amount:
+        type: number
+      total_count:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.ReviewResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  models.TransactionHistoryItem:
+    properties:
+      amount:
+        type: number
+      balance_after:
+        type: number
+      balance_before:
+        type: number
+      counterparty:
+        allOf:
+        - $ref: '#/definitions/models.CounterpartyInfo'
+        description: Counterparty (sender or receiver, if applicable).
+      created_at:
+        type: string
+      currency:
+        type: string
+      description:
+        type: string
+      fee:
+        type: number
+      id:
+        type: string
+      method:
+        description: '"bank_transfer", "internal_transfer", "onchain", "p2p_trade",
+          "referral_reward"'
+        type: string
+      receipt:
+        allOf:
+        - $ref: '#/definitions/models.TransactionReceipt'
+        description: |-
+          Receipt holds type-specific details (bank info for fiat, chain info for
+          crypto). It is always present so the client can access receipt fields
+          without checking a separate level.
+      status:
+        type: string
+      type:
+        type: string
+    type: object
+  models.TransactionReceipt:
+    properties:
+      account_number:
+        type: string
+      address:
+        description: Crypto-specific fields.
+        type: string
+      bank_name:
+        description: Fiat-specific fields.
+        type: string
+      network:
+        type: string
+      tx_hash:
+        type: string
+    type: object
+  models.UserProfile:
+    properties:
+      avatar_url:
+        type: string
+      country:
+        type: string
+      created_at:
+        type: string
+      date_of_birth:
+        type: string
+      display_username_on_p2p:
+        type: boolean
+      first_name:
+        description: KYC-related profile fields
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      middle_name:
+        type: string
+      phone_number:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_2fa_enabled:
+        type: boolean
+      is_active:
+        type: boolean
+      is_pin_enabled:
+        type: boolean
+      last_name:
+        type: string
+      referral_code:
+        type: string
+      role:
+        $ref: '#/definitions/models.UserRole'
+      uid:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserRole:
+    enum:
+    - user
+    - admin
+    type: string
+    x-enum-varnames:
+    - RoleUser
+    - RoleAdmin
+  models.WalletResponse:
+    properties:
+      balance:
+        type: number
+      created_at:
+        type: string
+      currency:
+        type: string
+      currency_id:
+        type: string
+      id:
+        type: string
+      locked_balance:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.WalletTransaction:
+    properties:
+      amount:
+        type: number
+      balance_after:
+        type: number
+      balance_before:
+        type: number
+      created_at:
+        type: string
+      crypto_deposit:
+        $ref: '#/definitions/models.CryptoDeposit'
+      crypto_deposit_id:
+        type: string
+      crypto_withdrawal:
+        $ref: '#/definitions/models.CryptoWithdrawal'
+      crypto_withdrawal_id:
+        type: string
+      currency:
+        description: |-
+          Currency is not stored in this table; it is populated from the parent
+          wallet at query time via a JOIN.
+        type: string
+      description:
+        type: string
+      fiat_deposit:
+        $ref: '#/definitions/models.FiatDeposit'
+      fiat_deposit_id:
+        type: string
+      fiat_withdrawal:
+        $ref: '#/definitions/models.FiatWithdrawal'
+      fiat_withdrawal_id:
+        type: string
+      id:
+        type: string
+      reference_id:
+        type: string
+      type:
+        description: deposit, withdrawal, trade, fee, escrow_lock
+        type: string
+      updated_at:
+        type: string
+      wallet_id:
+        type: string
+    type: object
+  nomba.AccountBalanceData:
+    properties:
+      accountId:
+        type: string
+      availableBalance:
+        type: number
+      currency:
+        type: string
+      ledgerBalance:
+        type: number
+    type: object
+  quidax.MeWallet:
+    properties:
+      balance:
+        type: string
+      blockchain_enabled:
+        type: boolean
+      converted_balance:
+        type: string
+      currency:
+        type: string
+      default_network:
+        type: string
+      deposit_address:
+        type: string
+      destination_tag:
+        type: string
+      id:
+        type: string
+      is_crypto:
+        type: boolean
+      locked:
+        type: string
+      name:
+        type: string
+      reference_currency:
+        type: string
+      staked:
+        type: string
+    type: object
+  repository.CountAmount:
+    properties:
+      amount:
+        type: number
+      count:
+        type: integer
+    type: object
+  repository.DailyFeeRow:
+    properties:
+      currency:
+        type: string
+      date:
+        description: '"YYYY-MM-DD"'
+        type: string
+      total_fees:
+        type: number
+      trade_count:
+        type: integer
+    type: object
+  repository.FinancialSummary:
+    properties:
+      pending_crypto_deposits:
+        $ref: '#/definitions/repository.CountAmount'
+      pending_fiat_deposits:
+        $ref: '#/definitions/repository.CountAmount'
+      processing_crypto_withdrawals:
+        $ref: '#/definitions/repository.CountAmount'
+      processing_fiat_withdrawals:
+        $ref: '#/definitions/repository.CountAmount'
+      wallet_balances:
+        items:
+          $ref: '#/definitions/repository.WalletBalanceSummary'
+        type: array
+    type: object
+  repository.OrderStats:
+    properties:
+      cancelled_orders:
+        type: integer
+      completed_orders:
+        type: integer
+      disputed_orders:
+        type: integer
+      total_orders:
+        type: integer
+      total_volume:
+        description: sum of completed order totals (fiat)
+        type: number
+    type: object
+  repository.WalletBalanceSummary:
+    properties:
+      currency:
+        type: string
+      total_balance:
+        type: number
+      wallet_count:
+        type: integer
+    type: object
+  repository.WalletDiscrepancy:
+    properties:
+      currency:
+        type: string
+      discrepancy:
+        description: stored - tx_net
+        type: number
+      stored_balance:
+        description: from wallets.balance (converted)
+        type: number
+      tx_count:
+        type: integer
+      tx_net_balance:
+        description: SUM(balance_after - balance_before)
+        type: number
+      user_email:
+        type: string
+      user_id:
+        type: string
+      wallet_id:
+        type: string
+    type: object
+  repository.WalletVerificationResult:
+    properties:
+      discrepancies:
+        items:
+          $ref: '#/definitions/repository.WalletDiscrepancy'
+        type: array
+      discrepancy_count:
+        type: integer
+      total_wallets:
+        type: integer
+    type: object
+  service.AdminOrderParty:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      uid:
+        type: string
+      username:
+        type: string
+    type: object
+  service.AdminP2POrderResponse:
+    properties:
+      ad_id:
+        type: string
+      amount:
+        type: number
+      buyer:
+        $ref: '#/definitions/service.AdminOrderParty'
+      buyer_id:
+        type: string
+      created_at:
+        type: string
+      currency:
+        type: string
+      escrow_wallet_id:
+        type: string
+      id:
+        type: string
+      maker_fee_amount:
+        type: number
+      maker_fee_currency:
+        type: string
+      order_number:
+        description: OrderNumber is a public-facing 20-digit numeric identifier for
+          the order.
+        type: string
+      price:
+        type: number
+      seller:
+        $ref: '#/definitions/service.AdminOrderParty'
+      seller_id:
+        type: string
+      status:
+        description: pending, paid, disputed, cancelled, completed
+        type: string
+      taker_fee_amount:
+        type: number
+      taker_fee_currency:
+        type: string
+      total:
+        type: number
+      type:
+        description: Type indicates whether this is a buy or sell order for crypto
+          (mirrors the ad type).
+        type: string
+      updated_at:
+        type: string
+    type: object
+  service.ReferralInfo:
+    properties:
+      current_quarter:
+        type: string
+      eligible:
+        type: boolean
+      quarter_trade_count:
+        type: integer
+      referral_code:
+        type: string
+      required_trade_count:
+        type: integer
+      total_points:
+        type: number
+      total_referrals:
+        type: integer
+    type: object
+  service.RevenueSummary:
+    properties:
+      fee_balances:
+        items:
+          $ref: '#/definitions/models.PlatformFeeBalance'
+        type: array
+      order_stats:
+        $ref: '#/definitions/repository.OrderStats'
+    type: object
+  service.UserLimitInfo:
+    properties:
+      effective_limit_ngn:
+        type: integer
+      override_limit_ngn:
+        description: null when no override
+        type: integer
+      remaining_ngn:
+        type: integer
+      tier:
+        $ref: '#/definitions/models.KYCTier'
+      tier_limit_ngn:
+        type: integer
+      today_usage_ngn:
+        type: integer
+    type: object
+  utils.PaginatedResponse:
+    properties:
+      data: {}
+      message:
+        type: string
+      pagination:
+        $ref: '#/definitions/utils.PaginationMeta'
+      success:
+        type: boolean
+    type: object
+  utils.PaginationMeta:
+    properties:
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  utils.Response:
+    properties:
+      data: {}
+      error: {}
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+  description: Production-ready backend API for Kynettic platform with authentication,
+    user management, and health monitoring
+  title: Kynettic API
+  version: "1.0"
+paths:
+  /admin/community-links:
+    post:
+      consumes:
+      - application/json
+      description: 'Admin-only: add or update a community link (upsert by platform).'
+      parameters:
+      - description: Community link
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpsertCommunityLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CommunityLink'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Upsert community link
+      tags:
+      - admin
+  /admin/currencies:
+    post:
+      consumes:
+      - application/json
+      description: 'Admin-only: create or update a currency (upsert by symbol).'
+      parameters:
+      - description: Currency
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateCurrencyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Currency'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create/update currency
+      tags:
+      - admin
+  /admin/finance/crypto-deposits:
+    get:
+      description: 'Admin-only: paginated crypto deposits, filterable by status and
+        currency.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Filter by status: pending, confirmed'
+        in: query
+        name: status
+        type: string
+      - description: Filter by currency symbol e.g. USDT
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List crypto deposits (admin)
+      tags:
+      - admin
+  /admin/finance/crypto-withdrawals:
+    get:
+      description: 'Admin-only: paginated crypto withdrawals, filterable by status
+        and currency.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Filter by status: processing, completed, failed'
+        in: query
+        name: status
+        type: string
+      - description: Filter by currency symbol e.g. USDT
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List crypto withdrawals (admin)
+      tags:
+      - admin
+  /admin/finance/fiat-deposits:
+    get:
+      description: 'Admin-only: paginated fiat deposits, filterable by status.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Filter by status: pending, confirmed'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List fiat deposits (admin)
+      tags:
+      - admin
+  /admin/finance/fiat-withdrawals:
+    get:
+      description: 'Admin-only: paginated fiat withdrawals, filterable by status.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Filter by status: processing, completed, failed'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List fiat withdrawals (admin)
+      tags:
+      - admin
+  /admin/finance/internal-transfers:
+    get:
+      description: 'Admin-only: paginated internal transfers between users.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List internal transfers (admin)
+      tags:
+      - admin
+  /admin/finance/nomba-balance:
+    get:
+      description: 'Admin-only: fetches the current ledger and available balance from
+        the Nomba business account.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/nomba.AccountBalanceData'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Nomba account balance (admin)
+      tags:
+      - admin
+  /admin/finance/quidax-balances:
+    get:
+      description: 'Admin-only: fetches all Quidax master-account wallets and returns
+        only those with a non-zero balance.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/quidax.MeWallet'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Quidax wallets with balance (admin)
+      tags:
+      - admin
+  /admin/finance/summary:
+    get:
+      description: 'Admin-only: total wallet balances per currency and pending deposit/withdrawal
+        counts.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/repository.FinancialSummary'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Financial summary (admin)
+      tags:
+      - admin
+  /admin/finance/verify-balances:
+    get:
+      description: 'Admin-only: compares wallets.balance against SUM(balance_after
+        - balance_before) from wallet_transactions. Returns only wallets with discrepancies.
+        This is an expensive query — use sparingly.'
+      parameters:
+      - description: 'Filter by currency symbol e.g. USDT (default: all currencies)'
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/repository.WalletVerificationResult'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Verify wallet balances (admin)
+      tags:
+      - admin
+  /admin/kyc:
+    get:
+      description: 'Admin-only: paginated KYC queue with optional filters by status
+        and tier.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Filter by status: pending, verified, rejected'
+        in: query
+        name: status
+        type: string
+      - description: 'Filter by tier: 0, 1, 2, 3'
+        in: query
+        name: tier
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List KYC verifications (admin)
+      tags:
+      - admin
+  /admin/kyc/{user_id}:
+    get:
+      description: 'Admin-only: full KYC record for a user including address, selfie
+        confidence, liveness score.'
+      parameters:
+      - description: User UUID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get KYC verification detail (admin)
+      tags:
+      - admin
+  /admin/networks:
+    post:
+      consumes:
+      - application/json
+      description: 'Admin-only: create or update a network (upsert by chain_key +
+        network_type).'
+      parameters:
+      - description: Network
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateNetworkRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Network'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create/update network
+      tags:
+      - admin
+  /admin/notifications/broadcast:
+    post:
+      consumes:
+      - application/json
+      description: Create a notification for every user in the system (admin only)
+      parameters:
+      - description: Broadcast notification details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.BroadcastNotificationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Notification broadcasted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to broadcast notification
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Broadcast notification to all users
+      tags:
+      - admin
+  /admin/p2p/orders:
+    get:
+      description: 'Admin-only: paginated list of all P2P orders, filterable by status,
+        currency, user, and date range.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Order status: pending, paid, disputed, cancelled, completed'
+        in: query
+        name: status
+        type: string
+      - description: Crypto currency symbol (e.g. USDT)
+        in: query
+        name: currency
+        type: string
+      - description: Filter orders where user is buyer or seller (UUID)
+        in: query
+        name: user_id
+        type: string
+      - description: Start date filter (RFC3339, e.g. 2026-01-01T00:00:00Z)
+        in: query
+        name: from
+        type: string
+      - description: End date filter (RFC3339, e.g. 2026-12-31T23:59:59Z)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Orders retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/service.AdminP2POrderResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List all P2P orders (admin)
+      tags:
+      - admin
+  /admin/p2p/top-traders:
+    get:
+      description: 'Admin-only: paginated list of users ranked by number of completed
+        P2P trades, with total volume.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 20, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: Filter by crypto symbol (e.g. USDT)
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List top P2P traders (admin)
+      tags:
+      - admin
+  /admin/referral/claim-cycles:
+    get:
+      description: Admin endpoint to list all referral claim cycles.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List claim cycles
+      tags:
+      - referral-admin
+    post:
+      consumes:
+      - application/json
+      description: Admin endpoint to open a claim cycle for a quarter with a fiat
+        reward pool.
+      parameters:
+      - description: Claim cycle params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.OpenClaimCycleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Open claim cycle
+      tags:
+      - referral-admin
+  /admin/referral/claim-cycles/{id}:
+    patch:
+      description: Admin endpoint to close a claim cycle.
+      parameters:
+      - description: Claim cycle ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Close claim cycle
+      tags:
+      - referral-admin
+  /admin/referral/config:
+    get:
+      description: Admin endpoint to list all referral configuration values.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List referral configs
+      tags:
+      - referral-admin
+    put:
+      consumes:
+      - application/json
+      description: Admin endpoint to update a referral configuration value.
+      parameters:
+      - description: Config update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateReferralConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Update referral config
+      tags:
+      - referral-admin
+  /admin/referrals:
+    get:
+      description: Admin endpoint to list all referral relationships, optionally filtered
+        by status.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Page size
+        in: query
+        name: page_size
+        type: integer
+      - description: 'Filter by status: pending, completed'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List all referrals (admin)
+      tags:
+      - referral-admin
+  /admin/referrals/user/{user_id}:
+    get:
+      description: Admin endpoint to list all referrals made by a specific user.
+      parameters:
+      - description: Referrer user ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List referrals by user (admin)
+      tags:
+      - referral-admin
+  /admin/revenue/fees:
+    get:
+      description: 'Admin-only: fee totals grouped by day and currency. Default last
+        30 days.'
+      parameters:
+      - description: 'Start date YYYY-MM-DD (default: 30 days ago)'
+        in: query
+        name: from
+        type: string
+      - description: 'End date YYYY-MM-DD inclusive (default: today)'
+        in: query
+        name: to
+        type: string
+      - description: Filter by currency symbol (e.g. USDT)
+        in: query
+        name: currency
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/repository.DailyFeeRow'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Daily fee breakdown (admin)
+      tags:
+      - admin
+  /admin/revenue/summary:
+    get:
+      description: 'Admin-only: lifetime fee balances per currency and order stats
+        for the given date range (default last 30 days).'
+      parameters:
+      - description: 'Start date YYYY-MM-DD (default: 30 days ago)'
+        in: query
+        name: from
+        type: string
+      - description: 'End date YYYY-MM-DD inclusive (default: today)'
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/service.RevenueSummary'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Revenue summary (admin)
+      tags:
+      - admin
+  /admin/users:
+    get:
+      description: 'Admin-only: paginated user list with optional filters.'
+      parameters:
+      - description: Page number (default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Page size (default 10, max 100)
+        in: query
+        name: page_size
+        type: integer
+      - description: Email substring (case-insensitive)
+        in: query
+        name: email
+        type: string
+      - description: Exact 14-digit UID
+        in: query
+        name: uid
+        type: string
+      - description: KYC tier (0-3)
+        in: query
+        name: kyc_tier
+        type: integer
+      - description: Active status
+        in: query
+        name: is_active
+        type: boolean
+      - description: 2FA enabled
+        in: query
+        name: has_2fa
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.UserResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List users (admin)
+      tags:
+      - admin
+  /admin/users/{id}:
+    get:
+      description: 'Admin-only: full user profile, security state, KYC, wallets, recent
+        transactions.'
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.adminUserDetailResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get user detail (admin)
+      tags:
+      - admin
+  /admin/users/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      description: 'Admin-only: activate or deactivate a user. Deactivating immediately
+        invalidates all sessions.'
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Status
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SetUserStatusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Set user active status (admin)
+      tags:
+      - admin
+  /admin/users/{id}/withdrawal-limit:
+    get:
+      description: 'Admin-only: returns tier limit, custom override, today''s usage,
+        and remaining headroom.'
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/service.UserLimitInfo'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get user withdrawal limit (admin)
+      tags:
+      - admin
+  /admin/users/{id}/withdrawal-limit/override:
+    delete:
+      description: 'Admin-only: removes the custom daily withdrawal limit for a user,
+        reverting to their KYC tier default.'
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Remove withdrawal limit override (admin)
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: 'Admin-only: permanently sets a custom daily NGN withdrawal limit
+        for a user, overriding their tier default.'
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: New limit
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.setOverrideRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Set withdrawal limit override (admin)
+      tags:
+      - admin
+  /auth/2fa/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email, password, and TOTP code
+      parameters:
+      - description: Login credentials with 2FA code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.TwoFALoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.AuthResponse'
+              type: object
+        "401":
+          description: invalid email or password | account is deactivated | too many
+            failed login attempts; please try again later | 2FA not configured for
+            this account | 2FA not enabled for this account | invalid authenticator
+            code
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: User login with 2FA
+      tags:
+      - auth
+  /auth/2fa/verify:
+    post:
+      consumes:
+      - application/json
+      description: Exchange a pre_auth_token (from POST /auth/login) and a TOTP code
+        for access and refresh tokens.
+      parameters:
+      - description: Pre-auth token and TOTP code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.VerifyTwoFARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.AuthResponse'
+              type: object
+        "401":
+          description: invalid or expired pre-auth token | invalid authenticator code
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Verify 2FA and complete login
+      tags:
+      - auth
+  /auth/apple:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate or register a user using an Apple ID token and return
+        access/refresh tokens.
+      parameters:
+      - description: Apple ID token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SocialLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.AuthResponse'
+              type: object
+        "401":
+          description: invalid Apple ID token | account is deactivated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Login with Apple
+      tags:
+      - auth
+  /auth/forgot-password/request-otp:
+    post:
+      consumes:
+      - application/json
+      description: Send a 6-digit OTP to email (valid for 10 minutes). Always returns
+        200 to prevent email enumeration.
+      parameters:
+      - description: Password reset OTP request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ForgotPasswordRequestOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If this email is registered, an OTP has been sent
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid email format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Request password reset OTP
+      tags:
+      - auth
+  /auth/forgot-password/resend-otp:
+    post:
+      consumes:
+      - application/json
+      description: Resend the 6-digit password reset OTP. Subject to the same rate
+        limits as the initial request (60s minimum between sends, max 3 per 10-minute
+        window). Always returns 200 to prevent email enumeration.
+      parameters:
+      - description: Email to resend OTP to
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ForgotPasswordRequestOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If this email is registered, an OTP has been resent
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid email format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Resend password reset OTP
+      tags:
+      - auth
+  /auth/forgot-password/reset:
+    post:
+      consumes:
+      - application/json
+      description: Reset password after OTP verification.
+      parameters:
+      - description: Reset password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ForgotPasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: invalid or expired reset token | password must be at least
+            12 characters long and include upper, lower, number, and symbol | user
+            not found | account is deactivated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Reset password
+      tags:
+      - auth
+  /auth/forgot-password/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify OTP and return a short-lived reset token used to set a new
+        password.
+      parameters:
+      - description: Password reset OTP verification
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ForgotPasswordVerifyOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP verified, reset token returned
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+        "400":
+          description: otp not found or expired | too many invalid otp attempts |
+            invalid otp
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Verify password reset OTP
+      tags:
+      - auth
+  /auth/google:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate or register a user using a Google ID token and return
+        access/refresh tokens.
+      parameters:
+      - description: Google ID token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SocialLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.AuthResponse'
+              type: object
+        "401":
+          description: invalid Google ID token | account is deactivated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Login with Google
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password. Returns full tokens
+        when 2FA is disabled. Returns 202 with a short-lived pre_auth_token when 2FA
+        is enabled — exchange it via POST /auth/2fa/verify.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.AuthResponse'
+              type: object
+        "202":
+          description: 2FA required — pre_auth_token returned
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+              type: object
+        "401":
+          description: invalid email or password | account is deactivated | too many
+            failed login attempts
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: User login
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      description: Invalidate the current session. The user's session on the other
+        device type (if any) is not affected.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logged out successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Logout
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new access token using a valid refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token refreshed successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+        "401":
+          description: Invalid refresh token
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Refresh access token
+      tags:
+      - auth
+  /auth/register/request-otp:
+    post:
+      consumes:
+      - application/json
+      description: Send a 6-digit OTP to email (valid for 10 minutes). User is created
+        only after OTP verification + password set. Always returns 200 to prevent
+        email enumeration.
+      parameters:
+      - description: OTP Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RequestRegistrationOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If this email is eligible for registration, an OTP has been
+            sent
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid email format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Request registration OTP
+      tags:
+      - auth
+  /auth/register/resend-otp:
+    post:
+      consumes:
+      - application/json
+      description: Resend the 6-digit registration OTP. Subject to the same rate limits
+        as the initial request (60s minimum between sends, max 3 per 10-minute window).
+        Always returns 200 to prevent email enumeration.
+      parameters:
+      - description: Email to resend OTP to
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RequestRegistrationOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If this email is eligible for registration, an OTP has been
+            resent
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid email format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Resend registration OTP
+      tags:
+      - auth
+  /auth/register/set-password:
+    post:
+      consumes:
+      - application/json
+      description: Create user after OTP verification by setting password (names are
+        collected later).
+      parameters:
+      - description: Set Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserResponse'
+              type: object
+        "400":
+          description: invalid or expired registration token | password must be at
+            least 12 characters long and include upper, lower, number, and symbol
+            | user with this email already exists
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Set registration password
+      tags:
+      - auth
+  /auth/register/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify OTP and return a short-lived registration token used to
+        set password.
+      parameters:
+      - description: OTP Verification
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.VerifyRegistrationOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP verified, registration token returned
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+        "400":
+          description: otp not found or expired | too many invalid otp attempts |
+            invalid otp
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Verify registration OTP
+      tags:
+      - auth
+  /community-links:
+    get:
+      description: Returns all community links. Requires authentication.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.CommunityLink'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List community links
+      tags:
+      - community
+  /currencies:
+    get:
+      consumes:
+      - application/json
+      description: 'Public: list configured currencies.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Currency'
+                  type: array
+              type: object
+      summary: List currencies
+      tags:
+      - reference
+  /currencies/{currency_id}/networks:
+    get:
+      consumes:
+      - application/json
+      description: 'Public: list active blockchain networks that support a specific
+        currency.'
+      parameters:
+      - description: Currency ID (UUID)
+        in: path
+        name: currency_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Network'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: List supported networks for a currency
+      tags:
+      - reference
+  /currencies/{currency_id}/price:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Public: get the current market price of a cryptocurrency in Nigerian Naira (NGN) from CoinGecko.
+        Public: returns the fee tiers for fiat withdrawals and per-network fees for crypto withdrawals.
+      parameters:
+      - description: Currency ID
+        in: path
+        name: currency_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid currency ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Currency not found or CoinGecko ID not configured
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to fetch price
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get withdrawal fee schedule
+      tags:
+      - reference
+      - reference
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Check the health status of the API and its dependencies (database,
+        Redis)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service is healthy
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.HealthResponse'
+              type: object
+        "503":
+          description: Service is degraded
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.HealthResponse'
+              type: object
+      summary: Health check
+      tags:
+      - health
+  /networks:
+    get:
+      consumes:
+      - application/json
+      description: 'Public: list active networks.'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Network'
+                  type: array
+              type: object
+      summary: List networks
+      tags:
+      - reference
+  /p2p/ads:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of P2P ads with computed effective prices,
+        optionally filtered by type and currency. When mine_only=true, only the authenticated
+        user's ads are returned. For relative pricing ads, effective_price is calculated
+        based on current market price.
+      parameters:
+      - description: Ad type (buy or sell)
+        in: query
+        name: type
+        type: string
+      - description: Crypto currency ID (reference currencies.id)
+        in: query
+        name: currency_id
+        type: integer
+      - description: If true, only return my ads
+        in: query
+        name: mine_only
+        type: boolean
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: P2P ads retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/handler.P2PAdView'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List P2P ads
+      tags:
+      - p2p
+    post:
+      consumes:
+      - application/json
+      description: Create a new P2P ad (buy or sell) with pricing mode, rollover,
+        limits, and privacy options.
+      parameters:
+      - description: Ad details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateP2PAdRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: P2P ad created successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Invalid request or insufficient balance
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create P2P ad
+      tags:
+      - p2p
+  /p2p/ads/{id}:
+    delete:
+      description: Delete a P2P ad you own.
+      parameters:
+      - description: Ad ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: P2P ad deleted successfully
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Ad not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete P2P ad
+      tags:
+      - p2p
+    patch:
+      consumes:
+      - application/json
+      description: Update mutable fields of a P2P ad you own (price, limits, privacy,
+        status).
+      parameters:
+      - description: Ad ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Ad fields to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateP2PAdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: P2P ad updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.P2PAd'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Ad not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Update P2P ad
+      tags:
+      - p2p
+  /p2p/fees:
+    get:
+      description: Returns the platform fee percentage charged per P2P trade.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get P2P fees
+      tags:
+      - p2p
+  /p2p/my-ads:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of P2P ads created by the authenticated
+        user, optionally filtered by type, currency, and status.
+      parameters:
+      - description: Ad type (buy or sell)
+        in: query
+        name: type
+        type: string
+      - description: Crypto currency ID (reference currencies.id)
+        in: query
+        name: currency_id
+        type: integer
+      - description: Ad status (active, paused, closed)
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: My P2P ads retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.P2PAd'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List my P2P ads
+      tags:
+      - p2p
+  /p2p/orders:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of P2P orders where the authenticated
+        user is buyer or seller.
+      parameters:
+      - description: Crypto currency ID (reference currencies.id)
+        in: query
+        name: currency_id
+        type: integer
+      - description: Order status (pending, completed, cancelled, etc.)
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: P2P orders retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/handler.P2POrderView'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List my P2P orders
+      tags:
+      - p2p
+    post:
+      consumes:
+      - application/json
+      description: Execute an automated P2P trade (buy or sell) using an existing
+        ad; funds are moved between on-platform fiat and crypto wallets.
+      parameters:
+      - description: Unique idempotency key (UUID v4)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Trade details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ExecuteP2PTradeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: P2P trade executed successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.P2POrderView'
+              type: object
+        "400":
+          description: Invalid request or insufficient balance
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Duplicate request in progress
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Execute P2P trade
+      tags:
+      - p2p
+  /reviews:
+    get:
+      consumes:
+      - application/json
+      description: Get a paginated list of all reviews
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reviews retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.ReviewResponse'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: List reviews
+      tags:
+      - reviews
+    post:
+      consumes:
+      - application/json
+      description: Submit a review with name, email and content
+      parameters:
+      - description: Review details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SubmitReviewRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Review submitted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ReviewResponse'
+              type: object
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Submit a review
+      tags:
+      - reviews
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of all users (admin only)
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.UserResponse'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List all users
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by ID (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid user ID or cannot delete user
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a specific user's information by ID (admin only)
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserResponse'
+              type: object
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Admin access required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - users
+  /users/me:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently deletes the authenticated user's account and all associated
+        personal data in compliance with Google Play Store data deletion policy. A
+        confirmation email is sent before deletion. Financial records (transactions,
+        orders, wallet history) are retained for up to 7 years to satisfy anti-money-laundering
+        and financial regulations. All active sessions are immediately revoked.
+      parameters:
+      - description: Current password confirmation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.DeleteMyAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account deleted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Unable to delete account
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required or invalid password
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Delete my account
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the authenticated user's profile information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserResponse'
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get current user profile
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update the authenticated user's name or email
+      parameters:
+      - description: Profile update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profile updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserResponse'
+              type: object
+        "400":
+          description: Invalid request or email already exists
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Update current user profile
+      tags:
+      - users
+  /users/me/2fa/disable:
+    post:
+      consumes:
+      - application/json
+      description: Disable Google Authenticator for the authenticated user. Requires
+        both transaction PIN and a valid TOTP code.
+      parameters:
+      - description: PIN and TOTP code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.DisableTwoFARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 2FA disabled successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: invalid PIN | invalid authenticator code | 2FA not enabled
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Disable 2FA
+      tags:
+      - users
+  /users/me/2fa/enable:
+    post:
+      consumes:
+      - application/json
+      description: Verify a 6-digit TOTP code and enable Google Authenticator for
+        the authenticated user.
+      parameters:
+      - description: 2FA verification code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.EnableTwoFARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 2FA enabled successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid code or 2FA not initialized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Enable 2FA
+      tags:
+      - users
+  /users/me/2fa/setup:
+    post:
+      consumes:
+      - application/json
+      description: Generate a TOTP secret and otpauth URL for the authenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 2FA setup data generated
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.TwoFASetupResponse'
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Setup 2FA (Google Authenticator)
+      tags:
+      - users
+  /users/me/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Change the authenticated user's password
+      parameters:
+      - description: Password change details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password changed successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid old password or validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Change user password
+      tags:
+      - users
+  /users/me/crypto-withdrawals:
+    post:
+      consumes:
+      - application/json
+      description: Initiate an on-chain crypto withdrawal via Quidax, protected by
+        a 6-digit PIN and 6-digit authenticator (TOTP) code.
+      parameters:
+      - description: Unique idempotency key (UUID v4)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Crypto withdrawal details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CryptoWithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Withdrawal initiated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CryptoWithdrawal'
+              type: object
+        "400":
+          description: Invalid request or insufficient balance
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Tier 1 required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Duplicate request in progress
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create crypto withdrawal
+      tags:
+      - users
+  /users/me/deposit-account:
+    get:
+      consumes:
+      - application/json
+      description: Return the user's deposit bank account; if missing, create via
+        Nomba and persist.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BankAccount'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get my deposit bank account
+      tags:
+      - users
+  /users/me/email-change/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Verify the OTP sent to the new email address and update the account
+        email.
+      parameters:
+      - description: OTP code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ConfirmEmailChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid or expired OTP
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Confirm email change
+      tags:
+      - users
+  /users/me/email-change/request:
+    post:
+      consumes:
+      - application/json
+      description: Send a 6-digit OTP to the new email address. Call /me/email-change/confirm
+        with the code to commit the change.
+      parameters:
+      - description: New email address
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RequestEmailChangeOTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP sent to new email address
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Validation error or email already in use
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Request email change OTP
+      tags:
+      - users
+  /users/me/fiat-bank-lookup:
+    post:
+      consumes:
+      - application/json
+      description: Resolve the account name for a bank account using Nomba's bank
+        lookup.
+      parameters:
+      - description: Bank lookup details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.FiatBankLookupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account resolved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Validation or lookup error
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Lookup bank account
+      tags:
+      - users
+  /users/me/fiat-banks:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve banks and their codes for fiat withdrawals via Nomba.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Banks retrieved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List fiat banks
+      tags:
+      - users
+  /users/me/fiat-withdrawals:
+    post:
+      consumes:
+      - application/json
+      description: Initiate a fiat withdrawal to a bank account via Nomba, protected
+        by a 6-digit PIN and 6-digit authenticator (TOTP) code.
+      parameters:
+      - description: Unique idempotency key (UUID v4)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Fiat withdrawal details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.FiatWithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Fiat withdrawal initiated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.FiatWithdrawal'
+              type: object
+        "400":
+          description: Invalid request or insufficient balance
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Tier 1 required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Duplicate request in progress
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create fiat withdrawal
+      tags:
+      - users
+  /users/me/internal-transfer:
+    post:
+      consumes:
+      - application/json
+      description: Transfer funds between users by receiver UID or email. Currency
+        is provided by currency_id (from reference currencies). Protected by a 6-digit
+        PIN and 6-digit authenticator (TOTP) code.
+      parameters:
+      - description: Unique idempotency key (UUID v4)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Internal transfer details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.InternalTransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transfer completed successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.InternalTransfer'
+              type: object
+        "400":
+          description: Invalid request or insufficient balance
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Duplicate request in progress
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Create internal transfer
+      tags:
+      - users
+  /users/me/kyc/status:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the authenticated user's KYC verification status and tier
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: KYC status retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.KYCStatusResponse'
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get KYC status
+      tags:
+      - kyc
+  /users/me/kyc/tier1:
+    post:
+      consumes:
+      - application/json
+      description: Submit user details and BVN for Tier 1 verification
+      parameters:
+      - description: Tier 1 verification details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SubmitTier1Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tier 1 verification completed successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request or verification failed
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Submit Tier 1 KYC
+      tags:
+      - kyc
+  /users/me/kyc/tier2:
+    post:
+      consumes:
+      - application/json
+      description: Submit NIN for Tier 2 verification
+      parameters:
+      - description: Tier 2 verification details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SubmitTier2Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tier 2 verification completed successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request or verification failed
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Submit Tier 2 KYC
+      tags:
+      - kyc
+  /users/me/kyc/tier3:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Submit NIN, selfie image file, utility bill file, and address for
+        Tier 3 verification. Files are uploaded to Cloudinary.
+      parameters:
+      - description: National Identification Number (11 digits)
+        in: formData
+        name: nin
+        required: true
+        type: string
+      - description: Selfie image file (jpg, png)
+        in: formData
+        name: selfie_image
+        required: true
+        type: file
+      - description: Utility bill document (jpg, png, pdf)
+        in: formData
+        name: utility_bill
+        required: true
+        type: file
+      - description: Street address
+        in: formData
+        name: address_street
+        required: true
+        type: string
+      - description: City
+        in: formData
+        name: address_city
+        required: true
+        type: string
+      - description: State
+        in: formData
+        name: address_state
+        required: true
+        type: string
+      - description: Country
+        in: formData
+        name: address_country
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tier 3 verification completed successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request or verification failed
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Submit Tier 3 KYC
+      tags:
+      - kyc
+  /users/me/notifications:
+    get:
+      consumes:
+      - application/json
+      description: List notifications for the authenticated user
+      parameters:
+      - default: all
+        description: Filter by status
+        enum:
+        - unread
+        - all
+        in: query
+        name: status
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Notifications retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.NotificationResponse'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List my notifications
+      tags:
+      - notifications
+  /users/me/notifications/{id}/read:
+    patch:
+      consumes:
+      - application/json
+      description: Mark a specific notification as read for the authenticated user
+      parameters:
+      - description: Notification ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Notification marked as read
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid notification ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Notification not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mark notification as read
+      tags:
+      - notifications
+  /users/me/notifications/read-all:
+    patch:
+      consumes:
+      - application/json
+      description: Mark all unread notifications as read for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Notifications marked as read
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Mark all notifications as read
+      tags:
+      - notifications
+  /users/me/pin/change:
+    post:
+      consumes:
+      - application/json
+      description: Change the 6-digit transaction PIN used together with Google Authenticator
+        for high-risk actions.
+      parameters:
+      - description: PIN change details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.ChangePINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PIN changed successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Validation error or invalid old PIN
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Change transaction PIN
+      tags:
+      - users
+  /users/me/pin/setup:
+    post:
+      consumes:
+      - application/json
+      description: Configure a 6-digit transaction PIN used together with Google Authenticator
+        for high-risk actions.
+      parameters:
+      - description: PIN setup details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SetupPINRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PIN setup successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Validation error or PIN already configured
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Setup transaction PIN
+      tags:
+      - users
+  /users/me/referral:
+    get:
+      description: Returns referral code, total referrals, points, and quarterly eligibility
+        status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/service.ReferralInfo'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get my referral info
+      tags:
+      - referral
+  /users/me/referral/claim:
+    post:
+      description: Claims fiat reward for the currently open claim cycle.
+      parameters:
+      - description: Unique idempotency key (UUID v4)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "409":
+          description: Duplicate request in progress
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Claim referral reward
+      tags:
+      - referral
+  /users/me/referral/claims:
+    get:
+      description: Returns paginated claim history.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List my referral claims
+      tags:
+      - referral
+  /users/me/referral/leaderboard:
+    get:
+      description: Returns top referrers ranked by points earned in the current quarter.
+      parameters:
+      - default: 10
+        description: Number of entries
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get referral leaderboard
+      tags:
+      - referral
+  /users/me/referral/points:
+    get:
+      description: Returns paginated point accrual history.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List my referral point transactions
+      tags:
+      - referral
+  /users/me/referrals:
+    get:
+      description: Returns paginated list of referred users.
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.PaginatedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: List my referrals
+      tags:
+      - referral
+  /users/me/wallet-address:
+    get:
+      consumes:
+      - application/json
+      description: Return the user's wallet address for a given chain on mainnet;
+        if missing, create via Quidax and persist.
+      parameters:
+      - description: Chain key (e.g. bep20, erc20, trc20)
+        in: query
+        name: chain
+        required: true
+        type: string
+      - description: Currency symbol (e.g. USDT)
+        in: query
+        name: currency
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/handler.WalletAddressResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get wallet address for chain
+      tags:
+      - users
+  /users/me/wallet-transactions:
+    get:
+      consumes:
+      - application/json
+      description: List enriched wallet transactions for the authenticated user, optionally
+        filtered by currency
+      parameters:
+      - description: Currency symbol (e.g. USDT)
+        in: query
+        name: currency
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wallet transactions retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.PaginatedResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.TransactionHistoryItem'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get my wallet transactions
+      tags:
+      - users
+  /users/me/wallets:
+    get:
+      consumes:
+      - application/json
+      description: List all wallets (balances per currency) for the authenticated
+        user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wallets retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.WalletResponse'
+                  type: array
+              type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - BearerAuth: []
+      summary: Get my wallets
+      tags:
+      - users
+  /withdrawal-fees:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Public: get the current market price of a cryptocurrency in Nigerian Naira (NGN) from CoinGecko.
+        Public: returns the fee tiers for fiat withdrawals and per-network fees for crypto withdrawals.
+      produces:
+      - application/json
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid currency ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Currency not found or CoinGecko ID not configured
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to fetch price
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get withdrawal fee schedule
+      tags:
+      - reference
+      - reference
+  /withdrawal-fees/crypto:
+    get:
+      consumes:
+      - application/json
+      description: 'Public: returns the withdrawal fee for a specific currency and
+        chain, sourced from Quidax and cached for 5 hours.'
+      parameters:
+      - description: Currency symbol (e.g. usdt)
+        in: query
+        name: currency
+        required: true
+        type: string
+      - description: Network chain key (e.g. erc20, trc20)
+        in: query
+        name: chain
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Withdrawal fee retrieved
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Missing or invalid parameters
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to fetch fee
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get crypto withdrawal fee
+      tags:
+      - reference
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

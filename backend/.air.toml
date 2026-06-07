@@ -1,0 +1,31 @@
+# Air configuration for Kynettic backend
+# Docs: https://github.com/air-verse/air
+
+root = "."
+tmp_dir = "./tmp"
+
+[build]
+  # Build the API binary into bin/
+  cmd = "go build -o ./bin/kynettic-backend ."
+  bin = "./bin/kynettic-backend"
+  # Command to run after successful build
+  full_bin = "./bin/kynettic-backend"
+  include_ext = ["go"]
+  exclude_dir = ["vendor", "tmp", "bin", "docs", ".git"]
+  exclude_file = []
+  exclude_regex = []
+  follow_symlink = false
+  delay = 1000 # ms debounce
+
+[log]
+  time = true
+  main_only = false
+
+[color]
+  main = "yellow"
+  watcher = "cyan"
+  build = "green"
+  runner = "magenta"
+
+[misc]
+  clean_on_exit = true
