@@ -1,0 +1,81 @@
+{
+  "expo": {
+    "name": "Kynettic",
+    "slug": "kynettic",
+    "owner": "kynettic",
+    "version": "4.0.0",
+    "scheme": "kynettic",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kynettic.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.kynettic.app",
+      "versionCode": 2,
+      "userInterfaceStyle": "light",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "pan"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/splash.png",
+          "resizeMode": "cover",
+          "imageWidth": 400
+        }
+      ],
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow Kynettic to access your camera for identity verification.",
+          "photosPermission": "Allow Kynettic to access your photos for identity verification."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "cameraPermission": "Kynettic needs camera access to capture your photo for identity verification.",
+          "photosPermission": "Kynettic needs access to your photos to upload identity documents."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "47225326-44a9-4c7f-94bc-b77b646c9c78"
+      },
+      "apiBaseUrl": "https://api.kynettic.com/api/v1"
+    }
+  }
+}

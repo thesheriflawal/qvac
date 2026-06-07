@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@theme {
+  --color-primary: #4472B7;
+  --color-primary-dark: #2d5a9e;
+  --color-secondary: #FBAD45;
+  --color-dark: #000000;
+  --color-light: rgba(68, 114, 183, 0.13);
+  --color-dark-navy: #1D3B53;
+  --color-secondary-gray: #8E8E93;
+  --color-screen-bg: #F5F5F5;
+  --font-roboto: var(--font-roboto);
+  --font-outfit: var(--font-outfit);
+  --font-dmsans: var(--font-dm-sans);
+}
+:root { --background: #F5F5F5; --foreground: #000000; }
+html { overflow-x: hidden; }
+body { font-family: var(--font-roboto), var(--font-outfit), sans-serif; overflow-x: hidden; overflow-y: auto; }
+
+/* Eliminate 300ms tap delay on mobile for all interactive elements */
+a, button, input, select, textarea, label, [role="button"] {
+  touch-action: manipulation;
+}
+.landing-scope {
+  --color-primary: #FBAD45;
+  --color-secondary: #4472B7;
+  background: rgba(68,114,183,0.13);
+  font-family: var(--font-dm-sans), sans-serif;
+}
+.landing-scope h1,
+.landing-scope h2,
+.landing-scope h3,
+.landing-scope h4,
+.landing-scope h5,
+.landing-scope h6 {
+  font-family: var(--font-outfit), sans-serif;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
